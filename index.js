@@ -8,15 +8,15 @@ require("dotenv").config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname))); // 🔥 Serve o HTML
+app.use(express.static(path.join(__dirname, "public"))); // pasta com HTML
 
 // 🔗 Conexão com banco no Render
 const pool = new Pool({
-  connectionString: "postgresql://elloysabigas_crud_render_user:8ihOByHH19YSazzehDIdyTGWMHNhZxM6@dpg-d3sbliuuk2gs73c3rm30-a/elloysabigas_crud_render",
+  connectionString: process.env.DATABASE_URL || "postgres://elloysabigas_crud_render_user:8ihOByHH19YSazzehDIdyTGWMHNhZxM6@dpg-d3sbliuuk2gs73c3rm30-a/elloysabigas_crud_render",
   ssl: { rejectUnauthorized: false }
 });
 
-// 🧱 Criar tabela (executar 1x)
+// 🧱 Criar tabela
 app.get("/create-table", async (req, res) => {
   try {
     await pool.query(`
@@ -61,7 +61,6 @@ app.put("/alunos/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, idade } = req.body;
   try {
-    // ❗ Corrigido "idades" → "idade"
     await pool.query("UPDATE alunos SET nome=$1, idade=$2 WHERE id=$3", [nome, idade, id]);
     res.send("✏️ Aluno atualizado com sucesso!");
   } catch (erro) {
@@ -74,7 +73,6 @@ app.put("/alunos/:id", async (req, res) => {
 app.delete("/alunos/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    // ❗ Corrigido "WHEE" → "WHERE"
     await pool.query("DELETE FROM alunos WHERE id=$1", [id]);
     res.send("🗑️ Aluno excluído com sucesso!");
   } catch (erro) {
@@ -86,3 +84,5 @@ app.delete("/alunos/:id", async (req, res) => {
 app.listen(process.env.PORT || 10000, () => {
   console.log("🚀 Servidor rodando na porta 10000");
 });
+
+module.exports = app;
