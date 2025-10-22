@@ -8,15 +8,15 @@ require("dotenv").config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"))); // pasta com HTML
+app.use(express.static(path.join(__dirname))); // 🔥 Serve o HTML
 
 // 🔗 Conexão com banco no Render
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || "postgres://elloysabigas_crud_render_user:8ihOByHH19YSazzehDIdyTGWMHNhZxM6@dpg-d3sbliuuk2gs73c3rm30-a/elloysabigas_crud_render",
+  connectionString: "postgresql://elloysabigas_crud_render_user:8ihOByHH19YSazzehDIdyTGWMHNhZxM6@dpg-d3sbliuuk2gs73c3rm30-a/elloysabigas_crud_render",
   ssl: { rejectUnauthorized: false }
 });
 
-// 🧱 Criar tabela
+// 🧱 Criar tabela (executar 1x)
 app.get("/create-table", async (req, res) => {
   try {
     await pool.query(`
@@ -84,5 +84,3 @@ app.delete("/alunos/:id", async (req, res) => {
 app.listen(process.env.PORT || 10000, () => {
   console.log("🚀 Servidor rodando na porta 10000");
 });
-
-module.exports = app;
